@@ -4,7 +4,7 @@ import com.colak.springcloudgatewaytutorial.apigateway.config.GatewayRoutesRefre
 import com.colak.springcloudgatewaytutorial.apigateway.entity.ApiRoute;
 import com.colak.springcloudgatewaytutorial.apigateway.service.RouteService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.gateway.route.RouteLocator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -15,12 +15,11 @@ import reactor.core.publisher.Mono;
 
 import static org.springframework.web.reactive.function.BodyInserters.fromValue;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
+@Slf4j
 public class ApiRouteHandler {
     private final RouteService routeService;
-
-    private final RouteLocator routeLocator;
 
     private final GatewayRoutesRefresher gatewayRoutesRefresher;
 
@@ -33,6 +32,7 @@ public class ApiRouteHandler {
     }
 
     public Mono<ServerResponse> getById(ServerRequest serverRequest) {
+        log.info("getById is called");
         final String apiId = serverRequest.pathVariable("routeId");
         Mono<ApiRoute> apiRoute = routeService.getById(apiId);
         return apiRoute.flatMap(route -> ServerResponse.ok()
@@ -42,7 +42,8 @@ public class ApiRouteHandler {
     }
 
     public Mono<ServerResponse> refreshRoutes(ServerRequest serverRequest) {
+        log.info("refreshRoutes is called");
         gatewayRoutesRefresher.refreshRoutes();
-        return ServerResponse.ok().body(BodyInserters.fromValue("Routes reloaded successfully"));
+        return ServerResponse.ok().body(BodyInserters.fromObject("Routes reloaded successfully"));
     }
 }

@@ -14,15 +14,14 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 
 @Configuration
 public class ApiRouteRouter {
-    // http://localhost:8080/routes/refresh-routes
+    // http://localhost:8080/routes/refresh
     // http://localhost:8080/routes/1
     @Bean
     public RouterFunction<ServerResponse> route(ApiRouteHandler apiRouteHandler) {
         return RouterFunctions.route(POST("/routes")
                         .and(accept(MediaType.APPLICATION_JSON)), apiRouteHandler::create)
-                .andRoute(GET("/routes/{routeId}")
-                        .and(accept(MediaType.APPLICATION_JSON)), apiRouteHandler::getById)
-                .andRoute(GET("/routes/refresh-routes")
-                        .and(accept(MediaType.APPLICATION_JSON)), apiRouteHandler::refreshRoutes);
+                // The order of these definitions is important
+                .andRoute(GET("/routes/refresh"), apiRouteHandler::refreshRoutes)
+                .andRoute(GET("/routes/{routeId}"), apiRouteHandler::getById);
     }
 }
