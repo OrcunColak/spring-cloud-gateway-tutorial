@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      # applied globally to all routes.
+      globalFilters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.replenishRate: 10
+            redis-rate-limiter.burstCapacity: 20
+
+      routes:
+        - id: order-service # Unique id of the route. This must be unique
+          uri: http://localhost:8080 # Target microservice URI
+          predicates: # condition that you want to check before routing to the given URI.
+            - Path=/ignored/orders/** # Path predicate for URI path matching
+            - Method=GET
+          filters:
+            - StripPrefix=1 # Remove the first segment of the path
