@@ -16,3 +16,11 @@ spring:
             - Method=GET
           filters:
             - StripPrefix=1 # Remove the first segment of the path
+  data:
+    mongodb:
+      uri: mongodb://root:password@localhost:27017
+      database: scg
+
+job:
+  autorun:
+    enabled: true
