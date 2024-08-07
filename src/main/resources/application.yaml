@@ -5,8 +5,9 @@ spring:
       globalFilters:
         - name: RequestRateLimiter
           args:
-            redis-rate-limiter.replenishRate: 10
-            redis-rate-limiter.burstCapacity: 20
+            redis-rate-limiter:
+            replenishRate: 10 # Number of requests allowed per second.
+            burstCapacity: 20 # Maximum number of requests allowed in a burst.
 
       routes:
         - id: order-service # Unique id of the route. This must be unique
@@ -14,6 +15,7 @@ spring:
           predicates: # condition that you want to check before routing to the given URI.
             - Path=/ignored/orders/** # Path predicate for URI path matching
             - Method=GET
+            - RemoteAddr=192.168.1.0/24
           filters:
             - StripPrefix=1 # Remove the first segment of the path
   data:
